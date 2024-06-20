@@ -1,0 +1,58 @@
+#####ex1
+
+#####ex2
+
+ln --symbolic --force /usr/share/zoneinfo/Europe/Warsaw /etc/localtime
+
+#####ex3
+
+
+#A)
+userdel --remove guest
+
+#B)
+uderadd juloszef
+
+#C)
+awk '!/google-chrome/' /root/.fluxbox/menu > temp
+mv temp /root/.fluxbox/menu
+
+#D)
+rm  --recursive --force /usr/share/applications/google-chrome.desktop
+
+#####ex4
+
+#A)
+wget --output-document=qcl-0.6.7.tgz http://tph.tuwien.ac.at/~oemer/tgz/qcl-0.6.7.tgz
+tar -xvzf qcl-0.6.7.tgz
+
+#B)
+cd qcl-0.6.7
+awk '!/PLOPT =/' Makefile > temp
+awk '!/PLLIB =/' temp > temp2
+mv temp2 Makefile
+
+#C)
+cd ..
+mkdir tmp
+cd tmp
+for t in "readline-8.1.002-x86_64-1.txz" "gc-8.0.6-x86_64-1.txz" "kernel-headers-5.15.19-x86-2.txz" "guile-3.0.7-x86_64-1.txz" "make-4.3-x86_64-3.txz" "gcc-g%2B%2B-11.2.0-x86_64-2.txz" "binutils-2.37-x86_64-1.txz" "flex-2.6.4-x86_64-5.txz" "gcc-11.2.0-x86_64-2.txz";
+    do curl -o $t  http://ftp.slackware.pl/pub/slackware/slackware64-15.0/slackware64/d/$t
+done
+
+installpkg ./*.
+cd ../qcl-0.6.7
+make
+removepkg gcc-g++ guile kernel-headers binutils gc make readline gcc flex
+rm --recursive --force ./tmp
+
+#D)
+mkdir -p module/usr/bin
+mkdir -p module/usr/lib/qcl
+make QCLBIN=$(pwd)/pkg/usr/bin QCLDIR=$(pwd)/pkg/usr/lib/qcl install
+dir2sb module
+mv module /run/initramfs/memory/data/slax/modules/
+
+#E)
+cd ..
+rm --recursive --force qcl-0.6.0
